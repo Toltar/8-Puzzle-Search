@@ -17,6 +17,7 @@ public class Board {
 	}
 	/*
 	 * gets the Board State of this instance
+	 * @return The Instance of the BoardState of the Class
 	 */
 	public int[][] getBoard(){
 		return this.theBoard;
@@ -30,6 +31,7 @@ public class Board {
 	}
 	/*
 	 * gets the Board State ID for the Hash functions
+	 * @return The Inance of the stateID of the Class
 	 */
 	public double getStateID(){
 		return this.stateID;
@@ -58,6 +60,7 @@ public class Board {
 	 * Modified toString method for the BoardState
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * @return the Board State in a String Format
 	 */
 	@Override
 	public String toString(){
