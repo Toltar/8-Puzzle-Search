@@ -37,7 +37,6 @@ public class Board {
 	/*
 	 * sets the stateID of the particularState
 	 */
-	@SuppressWarnings("null")
 	private void setStateID(){
 		double newID = 0;
 		int rowProduct=1;
