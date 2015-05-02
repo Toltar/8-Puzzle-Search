@@ -15,6 +15,7 @@ public class Main {
 		}
 		Board state = new Board(test);
 		System.out.println(state.toString());
+		System.out.println("StateID: "+state.getStateID());
 	}
 
 }
