@@ -291,23 +291,28 @@ public class Board {
 		
 		//if the blank is in a corner
 		if((row==0 && column==0) || (row==0 && column==2) || (row==2 && column==0) || (row==2 && column==2)){
-			movableTiles.add(theBoard[1][column].getValue());
-			
-			if (row == 0)
+			if (row == 0){
 				movableTiles.add(theBoard[0][1].getValue());
-			else if (row == 2)
+				movableTiles.add(theBoard[1][column].getValue());
+			}
+			else if (row == 2){
+				movableTiles.add(theBoard[1][column].getValue());
 				movableTiles.add(theBoard[2][1].getValue());
+			}
 		}
 		//if the blank tile is in a middle edge
 		if((row==0 && column==1) || (row==1 && column==0) || (row==2 && column==1) || (row==1 && column==2)){
-			movableTiles.add(theBoard[1][1].getValue());	// center will always move in this case
-			
-			if (row == 0 || row == 2) {
+			if (row == 0) {
 				movableTiles.add(theBoard[row][0].getValue());
 				movableTiles.add(theBoard[row][2].getValue());
-			} 
-			else { // row == 1
+				movableTiles.add(theBoard[1][1].getValue());
+			} else if (row == 2) { 
+				movableTiles.add(theBoard[1][1].getValue());
+				movableTiles.add(theBoard[row][0].getValue());
+				movableTiles.add(theBoard[row][2].getValue());
+			} else { // row == 1
 				movableTiles.add(theBoard[0][column].getValue());
+				movableTiles.add(theBoard[1][1].getValue());
 				movableTiles.add(theBoard[2][column].getValue());
 			}
 		}
