@@ -20,6 +20,13 @@ public class Board {
 		setMovability();
 		setStateID();
 	}
+	public Board(Tile[][] newBoard, int rowZero, int columnZero){
+		setBoard(newBoard.clone());
+		this.rowOfZero=rowZero;
+		this.columnOfZero=columnZero;
+		setMovability1();
+		setStateID();
+	}
 	/*
 	 * Generates the movability of the state
 	 */
@@ -85,6 +92,62 @@ public class Board {
 			}
 		}
 	}
+	public void setMovability1(){
+		int row = rowOfZero;
+		int column = columnOfZero;
+		//if the blank tile is in the corner
+		if((row==0 && column==0) || (row==0 && column==2) || (row==2 && column==0) || (row==2 && column==2)){
+			if(row==0){
+				if(column==0){
+					theBoard[(row)][(column+1)].setMovable(true);
+					theBoard[(row+1)][(column)].setMovable(true);
+				}else if(column==2){
+					theBoard[(row)][(column-1)].setMovable(true);
+					theBoard[(row+1)][(column)].setMovable(true);
+				}
+			}else if(row==2){
+				if(column==0){
+					theBoard[(row)][(column+1)].setMovable(true);
+					theBoard[(row-1)][(column)].setMovable(true);
+							}else if(column==2){
+								theBoard[(row)][(column-1)].setMovable(true);
+								theBoard[(row-1)][(column)].setMovable(true);
+							}
+						}
+					}
+		//if the blank tile is in the middle edges
+		if((row==0 && column==1) || (row==1 && column==0) || (row==2 && column==1) || (row==1 && column==2)){
+			if(row==0){
+				theBoard[(row)][(column-1)].setMovable(true);
+				theBoard[(row)][(column+1)].setMovable(true);
+				theBoard[(row+1)][(column)].setMovable(true);
+			}else if(row == 1){
+				if(column==0){
+					theBoard[(row)][(column+1)].setMovable(true);
+					theBoard[(row+1)][(column)].setMovable(true);
+					theBoard[(row-1)][(column)].setMovable(true);
+					}else{
+					theBoard[(row)][(column-1)].setMovable(true);
+					theBoard[(row+1)][(column)].setMovable(true);
+					theBoard[(row-1)][(column)].setMovable(true);
+					}
+			}else if(row == 2){
+				theBoard[(row)][(column-1)].setMovable(true);
+				theBoard[(row-1)][(column)].setMovable(true);
+				theBoard[(row)][(column+1)].setMovable(true);
+			}
+		}
+		//if the blank tile is in the middle
+		if(row==1 && column==1){
+			theBoard[(row+1)][(column)].setMovable(true);
+			theBoard[(row-1)][(column)].setMovable(true);
+			theBoard[(row)][(column+1)].setMovable(true);
+			theBoard[(row)][(column-1)].setMovable(true);
+		}
+	}
+					
+	
+			
 	/*
 	 * gets the Board State of this instance
 	 * @return The Instance of the BoardState of the Class
@@ -155,12 +218,17 @@ public class Board {
 	public Board move(int tileToBeMoved){
 		Tile[][] childBoard;
 		childBoard = theBoard.clone();
-		
+		int row=0, column=0;
 		for(int x=0; x<SIZE; x++){
 			for(int y=9; y<SIZE; y++){
-				
+				if(childBoard[x][y].getValue()==tileToBeMoved && childBoard[x][y].isMovable()){
+					childBoard[rowOfZero][columnOfZero].setValue(tileToBeMoved);
+					childBoard[x][y].setValue(0);
+					row=x;
+					column=y;
+				}
 			}
 		}
-		return new Board(childBoard);
+		return new Board(childBoard,row,column);
 	}
 }
