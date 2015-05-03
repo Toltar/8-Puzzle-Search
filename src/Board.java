@@ -16,7 +16,7 @@ public class Board {
 	
 	private Tile[][] theBoard;
 	private int rowOfZero, columnOfZero;
-	private double stateID;
+	private String stateKey;
 	
 	/*
 	 * Constructs the newly made Board State
@@ -25,7 +25,7 @@ public class Board {
 	public Board(Tile[][] newBoard){
 		this.theBoard = newBoard;
 		setMovability();
-		setStateID();
+		
 	}
 	
 	/*
@@ -40,7 +40,7 @@ public class Board {
 		this.columnOfZero=columnZero;
 		
 		setMovability1();
-		setStateID();
+		
 	}
 	/*
 	 * Generates the movability of the state
@@ -177,35 +177,6 @@ public class Board {
 	public void setBoard(Tile[][] newBoard){
 		this.theBoard = newBoard;
 		this.setMovability();
-		this.setStateID();
-	}
-	
-	/*
-	 * gets the Board State ID for the Hash functions
-	 * @return The Instance of the stateID of the Class
-	 */
-	public double getStateID(){
-		return this.stateID;
-	}
-	
-	/* NEEDS WORK
-	 * sets the stateID of the particularState
-	 */
-	private void setStateID(){
-		double newID = 0;
-		int rowProduct=1;
-		int multiplier=1;
-		for(int x=0; x<SIZE; x++){
-			rowProduct = 1;
-			for(int y=0; y<SIZE; y++){
-				rowProduct *= multiplier*theBoard[x][y].getValue();
-				multiplier++;
-			}
-			//System.out.println(rowProduct);
-			newID+=(double)rowProduct;
-		}
-
-		stateID = newID/9;
 	}
 	
 	/*
