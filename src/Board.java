@@ -225,6 +225,10 @@ public class Board {
 		
 		return boardString;
 	}
+	/*
+	 * Tile Movement Function
+	 * @param {int} tileToBeMoved
+	 */
 	public Board move(int tileToBeMoved){
 		Tile[][] childBoard;
 		childBoard = theBoard.clone();
