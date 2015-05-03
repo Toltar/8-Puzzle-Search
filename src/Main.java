@@ -11,31 +11,90 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
 public class Main {
 
+	public static int count = 0;
+	public static PrintWriter fout;
+	
 	public static DirectedGraph<Board, DefaultEdge> depthGraph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static PrintWriter fout;
-	public static Tile[][] goal = getGoalBoard();
+	public static DirectedGraph<Board, DefaultEdge> breadthGraph = 
+			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
+	public static Tile[][] goalA = getGoalBoard(new int[]{1,2,3,
+														  8,0,4,
+														  7,6,5});
+	public static Tile[][] goalB = getGoalBoard(new int[]{0,1,2,
+														  3,4,5,
+														  6,7,8});
+	public static Tile[][] goalC = getGoalBoard(new int[]{1,2,3,
+														  4,5,6,
+														  7,8,0});
 	public static void main(String[] args) {
-		try {
-			fout = new PrintWriter(new FileWriter("output.txt"));
-		} catch(Exception e) {
-			System.out.println("Error. Could not find or create output.txt file");
-			System.exit(1);
-		}
+		bfs();
+	}
+	
+	public static void bfs(){
+		Board initial = new Board(getIntialBoard(), 2, 1);
+		System.out.println("INTIAL STATE");
+		System.out.println(initial);
 		
-		dfs();
+		breadthGraph.addVertex(initial);
+		breadthBuild(initial);
+		
+		GraphIterator<Board, DefaultEdge> iterator = 
+	            new BreadthFirstIterator<Board, DefaultEdge>(breadthGraph);
+	    
+	    while (iterator.hasNext()){
+	    	Board result = iterator.next();
+	    	boolean isGoalA, isGoalB, isGoalC;
+	    	
+			if ((isGoalA = isBoardGoal(result.getBoard(), goalA)) == true
+					|| (isGoalB = isBoardGoal(result.getBoard(), goalB)) == true
+					|| (isGoalC = isBoardGoal(result.getBoard(), goalC)) == true)
+			{
+	    		System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
+	    		return;
+	    	}
+	    }
+	}
+	
+	/**
+	 * Build a tree sutable for breadth first search
+	 * @param parent	the parent board state
+	 */
+	public static void breadthBuild(Board parent){
+		LinkedList<Integer> movableTiles = parent.getMovableSpaces();
+		int numKids = movableTiles.size();
+		
+		for (int i = 0; i < numKids; i++) {
+			System.out.println(++count);
+			int tile = movableTiles.get(i);
+			Board child = parent.move(tile);
+			
+			breadthGraph.addVertex(child);
+			breadthGraph.addEdge(parent, child);
+			
+			boolean isGoalA, isGoalB, isGoalC;
+			if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
+					|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
+					|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+			{
+				continue;
+			}
+			
+			breadthBuild(child);
+		}
 	}
 	
 	public static void dfs(){
 		Board initial = new Board(getIntialBoard(), 2, 1);
-		fout.println("INTIAL STATE");
-		fout.println(initial);
+		System.out.println("INTIAL STATE");
+		System.out.println(initial);
 		
 		depthGraph.addVertex(initial);
 		depthBuild(initial);
@@ -45,8 +104,13 @@ public class Main {
 	    
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
-	    	if (isBoardTheGoal(result.getBoard())) {
-	    		fout.println("DEPTH FIRST SEARCH RESULTS \n" + result);
+	    	
+	    	boolean isGoalA, isGoalB, isGoalC;
+			if ((isGoalA = isBoardGoal(result.getBoard(), goalA)) == true
+					|| (isGoalB = isBoardGoal(result.getBoard(), goalB)) == true
+					|| (isGoalC = isBoardGoal(result.getBoard(), goalC)) == true)
+			{
+	    		System.out.println("DEPTH FIRST SEARCH RESULTS \n" + result);
 	    		return;
 	    	}
 	    }
@@ -61,13 +125,18 @@ public class Main {
 		int numKids = movableTiles.size();
 		
 		for (int i = numKids-1; i >=0; i--) {
+			System.out.println(++count);
 			int tile = movableTiles.get(i);
 			Board child = parent.move(tile);
 			
 			depthGraph.addVertex(child);
 			depthGraph.addEdge(parent, child);
 			
-			if (isBoardTheGoal(child.getBoard())) {
+			boolean isGoalA, isGoalB, isGoalC;
+			if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
+					|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
+					|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+			{
 				continue;
 			}
 			
@@ -75,7 +144,7 @@ public class Main {
 		}
 	}
 	
-	public static boolean isBoardTheGoal(Tile[][] board){
+	public static boolean isBoardGoal(Tile[][] board, Tile[][] goal){
 		for (int i = 0; i < 3; i++){
 			for (int j = 0; j < 3; j++){
 				if (board[i][j].getValue() != goal[i][j].getValue())
@@ -84,7 +153,7 @@ public class Main {
 		}
 		return true;
 	}
-	
+
 	public static Tile[][] getIntialBoard(){
 		Tile[][] intialBoard = new Tile[3][3];
 		
@@ -106,23 +175,20 @@ public class Main {
 		return intialBoard;
 	}
 	
-	public static Tile[][] getGoalBoard(){
+	public static Tile[][] getGoalBoard(int[] nums){
 		Tile[][] goalBoard = new Tile[3][3];
 		
-		// {1, 2, 3}
-		// {4, 5, 6}
-		// {7, 8, 0}
-		goalBoard[0][0] = new Tile(1,0,0);
-		goalBoard[0][1] = new Tile(2,0,1);
-		goalBoard[0][2] = new Tile(3,0,2);
+		goalBoard[0][0] = new Tile(nums[0],0,0);
+		goalBoard[0][1] = new Tile(nums[1],0,1);
+		goalBoard[0][2] = new Tile(nums[2],0,2);
 		
-		goalBoard[1][0] = new Tile(4,1,0);
-		goalBoard[1][1] = new Tile(5,1,1);
-		goalBoard[1][2] = new Tile(6,1,2);
+		goalBoard[1][0] = new Tile(nums[3],1,0);
+		goalBoard[1][1] = new Tile(nums[4],1,1);
+		goalBoard[1][2] = new Tile(nums[5],1,2);
 		
-		goalBoard[2][0] = new Tile(7,2,0);
-		goalBoard[2][1] = new Tile(8,2,1);
-		goalBoard[2][2] = new Tile(0,2,2);
+		goalBoard[2][0] = new Tile(nums[6],2,0);
+		goalBoard[2][1] = new Tile(nums[7],2,1);
+		goalBoard[2][2] = new Tile(nums[8],2,2);
 		
 		return goalBoard;
 	}
