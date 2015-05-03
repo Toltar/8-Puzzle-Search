@@ -20,6 +20,7 @@ public class Main {
 				test[x][y]= n++;
 			}
 		}
+		
 		Board state = new Board(test);
 		System.out.println(state.toString());
 		System.out.println("StateID: "+state.getStateID());
