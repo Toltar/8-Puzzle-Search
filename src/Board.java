@@ -199,7 +199,7 @@ public class Board {
 				rowProduct *= multiplier*theBoard[x][y].getValue();
 				multiplier++;
 			}
-			System.out.println(rowProduct);
+			//System.out.println(rowProduct);
 			newID+=(double)rowProduct;
 		}
 
@@ -243,14 +243,30 @@ public class Board {
 		for(int x=0; x<SIZE; x++){
 			for(int y=0; y<SIZE; y++){
 				if(childBoard[x][y].getValue()==tileToBeMoved && childBoard[x][y].isMovable()){
+					fix_movability(childBoard);
+					
 					childBoard[rowOfZero][columnOfZero].setValue(tileToBeMoved);
 					childBoard[x][y].setValue(0);
+					
+					childBoard[rowOfZero][columnOfZero].setMovable(false);
+					
 					row=x;
 					column=y;
 				}
 			}
 		}
 		return new Board(childBoard,row,column);	// returns child state
+	}
+	
+	/**
+	 * Takes board of Tiles. Sets all movability to false
+	 * 
+	 * @param a 3x3 array of Tile objects
+	 */
+	private void fix_movability(Tile[][] board){
+		for(int i = 0; i < SIZE; i++)
+			for(int j = 0; j < SIZE; j++)
+				board[i][j].setMovable(false);
 	}
 	
 	public Tile[][] clone_board(){

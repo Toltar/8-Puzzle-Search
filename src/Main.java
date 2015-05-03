@@ -3,13 +3,34 @@
  * @author: Jairo Vera
  */
 
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
+
 public class Main {
 
 	public static void main(String[] args) {
-		Tile[][] intialBoard = getIntialState();
+		Board    intialState = new Board(getIntialBoard()); 
+		System.out.println("Intial State");
+		System.out.println(intialState.toString());
+		
+		Board move1 = intialState.move(6);
+		System.out.println("\nMoving 6 down");
+		System.out.println(move1.toString());
+		
+		Board move2 = move1.move(1);
+		System.out.println("\nMoving 1 right");
+		System.out.println(move2.toString());
+		
+		Board move3 = move2.move(2);
+		System.out.println("\nMoving 2 down");
+		System.out.println(move3.toString());
 	}
 	
-	public static Tile[][] getIntialState(){
+	public static Tile[][] getIntialBoard(){
 		Tile[][] intialBoard = new Tile[3][3];
 		
 		// {2, 8, 3}

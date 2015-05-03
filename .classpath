@@ -2,5 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Applications/eclipse/jgrapht-0.9.1/lib/jgrapht-ext-0.9.1-uber.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
