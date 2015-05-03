@@ -12,22 +12,11 @@ import org.jgrapht.traverse.GraphIterator;
 
 public class Main {
 
+	public static DirectedGraph<Board, DefaultEdge> graph = 
+			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
+	
 	public static void main(String[] args) {
-		Board    intialState = new Board(getIntialBoard()); 
-		System.out.println("Intial State");
-		System.out.println(intialState.toString());
-		
-		Board move1 = intialState.move(6);
-		System.out.println("\nMoving 6 down");
-		System.out.println(move1.toString());
-		
-		Board move2 = move1.move(1);
-		System.out.println("\nMoving 1 right");
-		System.out.println(move2.toString());
-		
-		Board move3 = move2.move(2);
-		System.out.println("\nMoving 2 down");
-		System.out.println(move3.toString());
+		testBoardClass();
 	}
 	
 	public static Tile[][] getIntialBoard(){
@@ -49,5 +38,27 @@ public class Main {
 		intialBoard[2][2] = new Tile(5,2,2);
 		
 		return intialBoard;
+	}
+
+	public static void testBoardClass(){
+		Board    intialState = new Board(getIntialBoard(), 2, 1); 
+		System.out.println("Intial State");
+		System.out.println(intialState.toString());
+		System.out.println(intialState.getMovableSpaces());
+		
+		Board move1 = intialState.move(6);
+		System.out.println("\nMoving 6 down");
+		System.out.println(move1.toString());
+		System.out.println(move1.getMovableSpaces());
+		
+		Board move2 = move1.move(1);
+		System.out.println("\nMoving 1 right");
+		System.out.println(move2.toString());
+		System.out.println(move2.getMovableSpaces());
+		
+		Board move3 = move2.move(2);
+		System.out.println("\nMoving 2 down");
+		System.out.println(move3.toString());
+		System.out.println(move3.getMovableSpaces());
 	}
 }

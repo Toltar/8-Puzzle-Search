@@ -4,6 +4,8 @@
  * @author Jairo Vera
  */
 
+import java.util.LinkedList;
+
 public class Board {
 	/*index of the array represents the positions of the tiles on the board
 	 * The contents of the array will be represented from numbers 1-9 and 0 for the blank position
@@ -186,7 +188,7 @@ public class Board {
 		return this.stateID;
 	}
 	
-	/*
+	/* NEEDS WORK
 	 * sets the stateID of the particularState
 	 */
 	private void setStateID(){
@@ -240,6 +242,9 @@ public class Board {
 		Tile[][] childBoard;
 		childBoard = clone_board();
 		int row=0, column=0;
+		boolean moveSuccess = false;
+		
+		mainloop:
 		for(int x=0; x<SIZE; x++){
 			for(int y=0; y<SIZE; y++){
 				if(childBoard[x][y].getValue()==tileToBeMoved && childBoard[x][y].isMovable()){
@@ -247,14 +252,20 @@ public class Board {
 					
 					childBoard[rowOfZero][columnOfZero].setValue(tileToBeMoved);
 					childBoard[x][y].setValue(0);
-					
 					childBoard[rowOfZero][columnOfZero].setMovable(false);
 					
 					row=x;
 					column=y;
+					moveSuccess = true;
+					break mainloop;
 				}
 			}
 		}
+		if (moveSuccess == false) {
+			System.out.println("Error. Tried to move unmovable tile.");
+			System.exit(1);
+		}
+		
 		return new Board(childBoard,row,column);	// returns child state
 	}
 	
@@ -267,6 +278,48 @@ public class Board {
 		for(int i = 0; i < SIZE; i++)
 			for(int j = 0; j < SIZE; j++)
 				board[i][j].setMovable(false);
+	}
+	
+	/**
+	 * @return a linked list of integers that represent
+	 * the movable tiles of the board
+	 */
+	public LinkedList<Integer> getMovableSpaces(){
+		LinkedList<Integer> movableTiles = new LinkedList<Integer>();
+		int row   = rowOfZero;
+		int column = columnOfZero;
+		
+		//if the blank is in a corner
+		if((row==0 && column==0) || (row==0 && column==2) || (row==2 && column==0) || (row==2 && column==2)){
+			movableTiles.add(theBoard[1][column].getValue());
+			
+			if (row == 0)
+				movableTiles.add(theBoard[0][1].getValue());
+			else if (row == 2)
+				movableTiles.add(theBoard[2][1].getValue());
+		}
+		//if the blank tile is in a middle edge
+		if((row==0 && column==1) || (row==1 && column==0) || (row==2 && column==1) || (row==1 && column==2)){
+			movableTiles.add(theBoard[1][1].getValue());	// center will always move in this case
+			
+			if (row == 0 || row == 2) {
+				movableTiles.add(theBoard[row][0].getValue());
+				movableTiles.add(theBoard[row][2].getValue());
+			} 
+			else { // row == 1
+				movableTiles.add(theBoard[0][column].getValue());
+				movableTiles.add(theBoard[2][column].getValue());
+			}
+		}
+		//if the blank tile is in the middle
+		if(row==1 && column==1){
+			movableTiles.add(theBoard[0][1].getValue());
+			movableTiles.add(theBoard[1][0].getValue());
+			movableTiles.add(theBoard[1][2].getValue());
+			movableTiles.add(theBoard[2][1].getValue());
+		}
+		
+		return movableTiles;
 	}
 	
 	public Tile[][] clone_board(){
