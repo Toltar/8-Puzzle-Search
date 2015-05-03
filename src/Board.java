@@ -4,7 +4,6 @@
  * @author Jairo Vera
  */
 
-
 public class Board {
 	/*index of the array represents the positions of the tiles on the board
 	 * The contents of the array will be represented from numbers 1-9 and 0 for the blank position
@@ -12,18 +11,21 @@ public class Board {
 	
 	public final int SIZE=3;
 	public final String NAME = "Board";
+	
 	private Tile[][] theBoard;
 	private int rowOfZero, columnOfZero;
 	private double stateID;
+	
 	/*
 	 * Constructs the newly made Board State
 	 * @param {int[][]} newBoard Input of the new board
 	 */
 	public Board(Tile[][] newBoard){
-		setBoard(newBoard.clone());
+		this.theBoard = newBoard;
 		setMovability();
 		setStateID();
 	}
+	
 	/*
 	 * Constructs the newly made Board State
 	 * @param {Tile[][]} newBoard Input of the new board
@@ -31,9 +33,10 @@ public class Board {
 	 * @param {int} indexOfBlankColumn
 	 */
 	public Board(Tile[][] newBoard, int rowZero, int columnZero){
-		setBoard(newBoard.clone());
+		this.theBoard = newBoard;
 		this.rowOfZero=rowZero;
 		this.columnOfZero=columnZero;
+		
 		setMovability1();
 		setStateID();
 	}
@@ -102,6 +105,7 @@ public class Board {
 			}
 		}
 	}
+	
 	public void setMovability1(){
 		int row = rowOfZero;
 		int column = columnOfZero;
@@ -155,9 +159,7 @@ public class Board {
 			theBoard[(row)][(column-1)].setMovable(true);
 		}
 	}
-					
-	
-			
+						
 	/*
 	 * gets the Board State of this instance
 	 * @return The Instance of the BoardState of the Class
@@ -165,13 +167,17 @@ public class Board {
 	public Tile[][] getBoard(){
 		return this.theBoard;
 	}
+	
 	/*
 	 * Sets the Board State with a new Board State
 	 * @param {Tile[][]} newBoard;
 	 */
 	public void setBoard(Tile[][] newBoard){
 		this.theBoard = newBoard;
+		this.setMovability();
+		this.setStateID();
 	}
+	
 	/*
 	 * gets the Board State ID for the Hash functions
 	 * @return The Instance of the stateID of the Class
@@ -179,6 +185,7 @@ public class Board {
 	public double getStateID(){
 		return this.stateID;
 	}
+	
 	/*
 	 * sets the stateID of the particularState
 	 */
@@ -197,7 +204,6 @@ public class Board {
 		}
 
 		stateID = newID/9;
-		
 	}
 	
 	/*
@@ -225,16 +231,17 @@ public class Board {
 		
 		return boardString;
 	}
+	
 	/*
 	 * Tile Movement Function
 	 * @param {int} tileToBeMoved
 	 */
 	public Board move(int tileToBeMoved){
 		Tile[][] childBoard;
-		childBoard = theBoard.clone();
+		childBoard = clone_board();
 		int row=0, column=0;
 		for(int x=0; x<SIZE; x++){
-			for(int y=9; y<SIZE; y++){
+			for(int y=0; y<SIZE; y++){
 				if(childBoard[x][y].getValue()==tileToBeMoved && childBoard[x][y].isMovable()){
 					childBoard[rowOfZero][columnOfZero].setValue(tileToBeMoved);
 					childBoard[x][y].setValue(0);
@@ -243,6 +250,14 @@ public class Board {
 				}
 			}
 		}
-		return new Board(childBoard,row,column);
+		return new Board(childBoard,row,column);	// returns child state
+	}
+	
+	public Tile[][] clone_board(){
+		Tile[][] newboard = new Tile[3][3]; 
+		for (int i=0; i < 3; i++)
+			for (int j=0; j < 3; j++) 
+				newboard[i][j] = theBoard[i][j].getCopy();
+		return newboard;
 	}
 }
