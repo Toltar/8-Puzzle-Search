@@ -1,4 +1,8 @@
-import java.util.Arrays;
+/*
+ * The State Class which holds the state
+ * @author Matthew Dickens
+ * @author Jairo Vera
+ */
 
 
 public class Board {
@@ -20,6 +24,12 @@ public class Board {
 		setMovability();
 		setStateID();
 	}
+	/*
+	 * Constructs the newly made Board State
+	 * @param {Tile[][]} newBoard Input of the new board
+	 * @param {int} indexOfBlankRow
+	 * @param {int} indexOfBlankColumn
+	 */
 	public Board(Tile[][] newBoard, int rowZero, int columnZero){
 		setBoard(newBoard.clone());
 		this.rowOfZero=rowZero;
@@ -164,7 +174,7 @@ public class Board {
 	}
 	/*
 	 * gets the Board State ID for the Hash functions
-	 * @return The Inance of the stateID of the Class
+	 * @return The Instance of the stateID of the Class
 	 */
 	public double getStateID(){
 		return this.stateID;
