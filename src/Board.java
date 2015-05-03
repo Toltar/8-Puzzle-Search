@@ -3,29 +3,24 @@
  * @author Matthew Dickens
  * @author Jairo Vera
  */
-
 public class Board {
 	/*index of the array represents the positions of the tiles on the board
 	 * The contents of the array will be represented from numbers 1-9 and 0 for the blank position
 	 */
-	
 	public final int SIZE=3;
 	public final String NAME = "Board";
-	
 	private Tile[][] theBoard;
 	private int rowOfZero, columnOfZero;
 	private String stateKey;
-	
 	/*
 	 * Constructs the newly made Board State
 	 * @param {int[][]} newBoard Input of the new board
 	 */
 	public Board(Tile[][] newBoard){
 		this.theBoard = newBoard;
-		setMovability();
-		
+		this.setKey();
+		this.setMovability();
 	}
-	
 	/*
 	 * Constructs the newly made Board State
 	 * @param {Tile[][]} newBoard Input of the new board
@@ -36,9 +31,8 @@ public class Board {
 		this.theBoard = newBoard;
 		this.rowOfZero=rowZero;
 		this.columnOfZero=columnZero;
-		
-		setMovability1();
-		
+		this.setKey();
+		this.setMovability1();
 	}
 	/*
 	 * Generates the movability of the state
@@ -105,7 +99,6 @@ public class Board {
 			}
 		}
 	}
-	
 	public void setMovability1(){
 		int row = rowOfZero;
 		int column = columnOfZero;
@@ -159,7 +152,6 @@ public class Board {
 			theBoard[(row)][(column-1)].setMovable(true);
 		}
 	}
-						
 	/*
 	 * gets the Board State of this instance
 	 * @return The Instance of the BoardState of the Class
@@ -167,7 +159,6 @@ public class Board {
 	public Tile[][] getBoard(){
 		return this.theBoard;
 	}
-	
 	/*
 	 * Sets the Board State with a new Board State
 	 * @param {Tile[][]} newBoard;
@@ -175,7 +166,7 @@ public class Board {
 	public void setBoard(Tile[][] newBoard){
 		this.theBoard = newBoard;
 		this.setMovability();
-		this.();
+		this.setKey();
 	}
 	//gets the key
 	public String getKey(){
@@ -212,10 +203,8 @@ public class Board {
 				boardString+= "\n";
 			}
 		}
-		
 		return boardString;
 	}
-	
 	/*
 	 * Tile Movement Function
 	 * @param {int} tileToBeMoved
@@ -236,7 +225,6 @@ public class Board {
 		}
 		return new Board(childBoard,row,column);	// returns child state
 	}
-	
 	public Tile[][] clone_board(){
 		Tile[][] newboard = new Tile[3][3]; 
 		for (int i=0; i < 3; i++)
