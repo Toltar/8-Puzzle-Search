@@ -24,8 +24,8 @@ public class Board {
 	 */
 	public Board(Tile[][] newBoard){
 		this.theBoard = newBoard;
+		setKey();
 		setMovability();
-		
 	}
 	
 	/*
@@ -38,9 +38,8 @@ public class Board {
 		this.theBoard = newBoard;
 		this.rowOfZero=rowZero;
 		this.columnOfZero=columnZero;
-		
+		setKey();
 		setMovability1();
-		
 	}
 	/*
 	 * Generates the movability of the state
@@ -204,7 +203,21 @@ public class Board {
 		
 		return boardString;
 	}
-	
+	// gets the key
+		public String getKey() {
+			return this.stateKey;
+		}
+
+		// sets the key based on tile position
+		private void setKey() {
+			String key = "";
+			for (Tile[] x : theBoard) {
+				for (Tile y : x) {
+					key += y.getValue();
+				}
+			}
+			stateKey = key;
+		}
 	/*
 	 * Tile Movement Function
 	 * @param {int} tileToBeMoved

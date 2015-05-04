@@ -7,6 +7,11 @@ import java.util.LinkedList;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import java.util.Hashtable;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Set;
+
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -15,7 +20,7 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
 public class Main {
-
+	public static Hashtable<String, Tile[][]> hashTable = new Hashtable<String, Tile[][]>();
 	public static int count = 0;
 	public static PrintWriter fout;
 	
@@ -34,11 +39,21 @@ public class Main {
 	public static Tile[][] goalC = getGoalBoard(new int[]{1,2,3,
 														  4,5,6,
 														  7,8,0});
+	
+	public static Board goalStateA;
+	public static Board goalStateB;
+	public static Board goalStateC;
 	public static void main(String[] args) {
+		goalStateA = new Board(goalA);
+		goalStateB = new Board(goalB);
+		goalStateC = new Board(goalC);
 		bfs();
 	}
 	
 	public static void bfs(){
+		hashTable.put(goalStateA.getKey(), goalStateA.getBoard());
+		hashTable.put(goalStateB.getKey(), goalStateB.getBoard());
+		hashTable.put(goalStateC.getKey(), goalStateC.getBoard());
 		Board initial = new Board(getIntialBoard(), 2, 1);
 		System.out.println("INTIAL STATE");
 		System.out.println(initial);
@@ -69,16 +84,18 @@ public class Main {
 	 */
 	public static void breadthBuild(Board parent){
 		LinkedList<Integer> movableTiles = parent.getMovableSpaces();
+		hashTable.put(parent.getKey(), parent.getBoard());
 		int numKids = movableTiles.size();
 		
 		for (int i = 0; i < numKids; i++) {
 			System.out.println(++count);
 			int tile = movableTiles.get(i);
 			Board child = parent.move(tile);
-			
-			breadthGraph.addVertex(child);
-			breadthGraph.addEdge(parent, child);
-			
+			if(!hashTable.containsKey(child.getKey())){
+				System.out.println("Makin Babies!!");
+				breadthGraph.addVertex(child);
+				breadthGraph.addEdge(parent, child);
+			}
 			boolean isGoalA, isGoalB, isGoalC;
 			if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
 					|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
@@ -86,7 +103,7 @@ public class Main {
 			{
 				continue;
 			}
-			
+			count=0;
 			breadthBuild(child);
 		}
 	}
