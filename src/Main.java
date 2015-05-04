@@ -40,12 +40,17 @@ public class Main {
 		goalStateC = new Board(goalC, 2, 2);
 		
 		Scanner in = new Scanner(System.in);
-		
 		System.out.println("Matt & Jairo's 8-Puzzle Program!");
 		System.out.print("Enter 1 for BFS or 2 for DFS: ");
 		int input = in.nextInt();
 		
-		System.out.println(input);
+		if (input == 1)
+			bfs();
+		else if (input == 2)
+			dfs();
+		else
+			System.out.println("Screw you then :p");
+		
 		System.exit(0);
 	}
 	
