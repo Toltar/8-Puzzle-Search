@@ -203,21 +203,22 @@ public class Board {
 		
 		return boardString;
 	}
+	
 	// gets the key
-		public String getKey() {
-			return this.stateKey;
-		}
+	public String getKey() {
+		return this.stateKey;
+	}
 
-		// sets the key based on tile position
-		private void setKey() {
-			String key = "";
-			for (Tile[] x : theBoard) {
-				for (Tile y : x) {
-					key += y.getValue();
-				}
+	// sets the key based on tile position
+	private void setKey() {
+		String key = "";
+		for (Tile[] x : theBoard) {
+			for (Tile y : x) {
+				key += Integer.toString(y.getValue());
 			}
-			stateKey = key;
 		}
+		stateKey = key;
+	}
 	/*
 	 * Tile Movement Function
 	 * @param {int} tileToBeMoved

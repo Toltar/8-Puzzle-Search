@@ -4,13 +4,8 @@
  */
 
 import java.util.LinkedList;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-
 import java.util.Hashtable;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Set;
+import java.util.Scanner;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -20,14 +15,9 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
 public class Main {
-	public static Hashtable<String, Tile[][]> hashTable = new Hashtable<String, Tile[][]>();
-	public static int count = 0;
-	public static PrintWriter fout;
+	public static Hashtable<String, Board> hashTable = new Hashtable<String, Board>();
 	
-	public static DirectedGraph<Board, DefaultEdge> depthGraph = 
-			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
-	
-	public static DirectedGraph<Board, DefaultEdge> breadthGraph = 
+	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
 	public static Tile[][] goalA = getGoalBoard(new int[]{1,2,3,
@@ -43,26 +33,32 @@ public class Main {
 	public static Board goalStateA;
 	public static Board goalStateB;
 	public static Board goalStateC;
+	
 	public static void main(String[] args) {
-		goalStateA = new Board(goalA);
-		goalStateB = new Board(goalB);
-		goalStateC = new Board(goalC);
-		bfs();
+		goalStateA = new Board(goalA, 1, 1);
+		goalStateB = new Board(goalB, 0, 0);
+		goalStateC = new Board(goalC, 2, 2);
+		
+		Scanner in = new Scanner(System.in);
+		
+		System.out.println("Matt & Jairo's 8-Puzzle Program!");
+		System.out.print("Enter 1 for BFS or 2 for DFS: ");
+		int input = in.nextInt();
+		
+		System.out.println(input);
+		System.exit(0);
 	}
 	
 	public static void bfs(){
-		hashTable.put(goalStateA.getKey(), goalStateA.getBoard());
-		hashTable.put(goalStateB.getKey(), goalStateB.getBoard());
-		hashTable.put(goalStateC.getKey(), goalStateC.getBoard());
 		Board initial = new Board(getIntialBoard(), 2, 1);
 		System.out.println("INTIAL STATE");
 		System.out.println(initial);
 		
-		breadthGraph.addVertex(initial);
+		graph.addVertex(initial);
 		breadthBuild(initial);
 		
 		GraphIterator<Board, DefaultEdge> iterator = 
-	            new BreadthFirstIterator<Board, DefaultEdge>(breadthGraph);
+	            new BreadthFirstIterator<Board, DefaultEdge>(graph);
 	    
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
@@ -72,7 +68,7 @@ public class Main {
 					|| (isGoalB = isBoardGoal(result.getBoard(), goalB)) == true
 					|| (isGoalC = isBoardGoal(result.getBoard(), goalC)) == true)
 			{
-	    		System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
+				System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
 	    		return;
 	    	}
 	    }
@@ -84,27 +80,35 @@ public class Main {
 	 */
 	public static void breadthBuild(Board parent){
 		LinkedList<Integer> movableTiles = parent.getMovableSpaces();
-		hashTable.put(parent.getKey(), parent.getBoard());
+		
+		hashTable.put(parent.getKey(), parent);
 		int numKids = movableTiles.size();
 		
 		for (int i = 0; i < numKids; i++) {
-			System.out.println(++count);
 			int tile = movableTiles.get(i);
 			Board child = parent.move(tile);
+			
 			if(!hashTable.containsKey(child.getKey())){
-				System.out.println("Makin Babies!!");
-				breadthGraph.addVertex(child);
-				breadthGraph.addEdge(parent, child);
+				
+				// fout.println("Makin Babies!!");
+				// fout.println(child);
+				graph.addVertex(child);
+				graph.addEdge(parent, child);
+				
+				boolean isGoalA, isGoalB, isGoalC;
+				if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
+						|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
+						|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+				{
+					continue;
+				}
+				breadthBuild(child);
 			}
-			boolean isGoalA, isGoalB, isGoalC;
-			if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
-					|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
-					|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
-			{
-				continue;
+			else {	// this child exists somewhere in the graph
+				Board existingChild = hashTable.get(child.getKey());
+				//fout.println("Not makin babies!\n" + existingChild);
+				graph.addEdge(parent, existingChild);
 			}
-			count=0;
-			breadthBuild(child);
 		}
 	}
 	
@@ -113,11 +117,11 @@ public class Main {
 		System.out.println("INTIAL STATE");
 		System.out.println(initial);
 		
-		depthGraph.addVertex(initial);
+		graph.addVertex(initial);
 		depthBuild(initial);
 		
 		GraphIterator<Board, DefaultEdge> iterator = 
-	            new DepthFirstIterator<Board, DefaultEdge>(depthGraph);
+	            new DepthFirstIterator<Board, DefaultEdge>(graph);
 	    
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
@@ -139,25 +143,33 @@ public class Main {
 	 */
 	public static void depthBuild(Board parent){
 		LinkedList<Integer> movableTiles = parent.getMovableSpaces();
+		
+		hashTable.put(parent.getKey(), parent);
 		int numKids = movableTiles.size();
 		
 		for (int i = numKids-1; i >=0; i--) {
-			System.out.println(++count);
 			int tile = movableTiles.get(i);
 			Board child = parent.move(tile);
 			
-			depthGraph.addVertex(child);
-			depthGraph.addEdge(parent, child);
+			if(!hashTable.containsKey(child.getKey())){
 			
-			boolean isGoalA, isGoalB, isGoalC;
-			if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
-					|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
-					|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
-			{
-				continue;
+				graph.addVertex(child);
+				graph.addEdge(parent, child);
+			
+				boolean isGoalA, isGoalB, isGoalC;
+				if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
+						|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
+						|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+				{
+					continue;
+				}
+			
+				depthBuild(child);
+			} else {  // this child exists somewhere in the graph
+                Board existingChild = hashTable.get(child.getKey());
+                //fout.println("Not makin babies!\n" + existingChild);
+                graph.addEdge(parent, existingChild);
 			}
-			
-			depthBuild(child);
 		}
 	}
 	
@@ -208,27 +220,5 @@ public class Main {
 		goalBoard[2][2] = new Tile(nums[8],2,2);
 		
 		return goalBoard;
-	}
-
-	public static void testBoardClass(){
-		Board    intialState = new Board(getIntialBoard(), 2, 1); 
-		System.out.println("Intial State");
-		System.out.println(intialState.toString());
-		System.out.println(intialState.getMovableSpaces());
-		
-		Board move1 = intialState.move(6);
-		System.out.println("\nMoving 6 down");
-		System.out.println(move1.toString());
-		System.out.println(move1.getMovableSpaces());
-		
-		Board move2 = move1.move(1);
-		System.out.println("\nMoving 1 right");
-		System.out.println(move2.toString());
-		System.out.println(move2.getMovableSpaces());
-		
-		Board move3 = move2.move(2);
-		System.out.println("\nMoving 2 down");
-		System.out.println(move3.toString());
-		System.out.println(move3.getMovableSpaces());
 	}
 }
