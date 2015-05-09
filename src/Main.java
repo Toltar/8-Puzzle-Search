@@ -20,15 +20,21 @@ public class Main {
 	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static Tile[][] goalA = getGoalBoard(new int[]{1,2,3,
-														  8,0,4,
-														  7,6,5});
-	public static Tile[][] goalB = getGoalBoard(new int[]{0,1,2,
-														  3,4,5,
-														  6,7,8});
-	public static Tile[][] goalC = getGoalBoard(new int[]{1,2,3,
-														  4,5,6,
-														  7,8,0});
+	public static Tile[][] initial = get2DTiles(new int[]{2,8,3,
+													      1,6,4,
+												          7,0,5});
+	
+	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,
+														8, 0,4,
+														7,6,5});
+	
+	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,
+														3,4,5,
+														6,7,8});
+	
+	public static Tile[][] goalC = get2DTiles(new int[]{1,2,3,
+													    4,5,6,
+														7,8,0});
 	
 	public static Board goalStateA;
 	public static Board goalStateB;
@@ -44,39 +50,49 @@ public class Main {
 		System.out.print("Enter 1 for BFS or 2 for DFS: ");
 		int input = in.nextInt();
 		
-		if (input == 1)
-			bfs();
-		else if (input == 2)
-			dfs();
+		long execTime = 0;
+		if (input == 1) {
+			execTime = bfs();
+		}
+		else if (input == 2) {
+			execTime = dfs();
+		}
 		else
-			System.out.println("Screw you then :p");
+			System.out.println("Goodbye :p");
+		
+		System.out.println("Your search performance: " + execTime + " nanoseconds");
 		
 		System.exit(0);
 	}
 	
-	public static void bfs(){
-		Board initial = new Board(getIntialBoard(), 2, 1);
+	public static long bfs(){
+		Board initialState = new Board(initial, 2, 1);
 		System.out.println("INTIAL STATE");
-		System.out.println(initial);
+		System.out.println(initialState);
 		
-		graph.addVertex(initial);
-		breadthBuild(initial);
+		graph.addVertex(initialState);
+		breadthBuild(initialState);
 		
+		long start, end;
 		GraphIterator<Board, DefaultEdge> iterator = 
 	            new BreadthFirstIterator<Board, DefaultEdge>(graph);
 	    
+		start = System.nanoTime();
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
 	    	boolean isGoalA, isGoalB, isGoalC;
 	    	
-			if ((isGoalA = isBoardGoal(result.getBoard(), goalA)) == true
-					|| (isGoalB = isBoardGoal(result.getBoard(), goalB)) == true
-					|| (isGoalC = isBoardGoal(result.getBoard(), goalC)) == true)
+			if ((isGoalA = compareBoards(result.getBoard(), goalA)) == true
+					|| (isGoalB = compareBoards(result.getBoard(), goalB)) == true
+					|| (isGoalC = compareBoards(result.getBoard(), goalC)) == true)
 			{
+				end = System.nanoTime();
 				System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
-	    		return;
+	    		return (end - start);
 	    	}
 	    }
+	    
+	    return -1;
 	}
 	
 	/**
@@ -101,9 +117,9 @@ public class Main {
 				graph.addEdge(parent, child);
 				
 				boolean isGoalA, isGoalB, isGoalC;
-				if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
-						|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
-						|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+				if ((isGoalA = compareBoards(child.getBoard(), goalA)) == true
+						|| (isGoalB = compareBoards(child.getBoard(), goalB)) == true
+						|| (isGoalC = compareBoards(child.getBoard(), goalC)) == true)
 				{
 					continue;
 				}
@@ -117,29 +133,35 @@ public class Main {
 		}
 	}
 	
-	public static void dfs(){
-		Board initial = new Board(getIntialBoard(), 2, 1);
+	public static long dfs(){
+		Board initialState = new Board(initial, 2, 1);
 		System.out.println("INTIAL STATE");
-		System.out.println(initial);
+		System.out.println(initialState);
 		
-		graph.addVertex(initial);
-		depthBuild(initial);
+		graph.addVertex(initialState);
+		depthBuild(initialState);
 		
+		long start, end;
 		GraphIterator<Board, DefaultEdge> iterator = 
 	            new DepthFirstIterator<Board, DefaultEdge>(graph);
 	    
+		start = System.nanoTime();
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
 	    	
 	    	boolean isGoalA, isGoalB, isGoalC;
-			if ((isGoalA = isBoardGoal(result.getBoard(), goalA)) == true
-					|| (isGoalB = isBoardGoal(result.getBoard(), goalB)) == true
-					|| (isGoalC = isBoardGoal(result.getBoard(), goalC)) == true)
+			if ((isGoalA = compareBoards(result.getBoard(), goalA)) == true
+					|| (isGoalB = compareBoards(result.getBoard(), goalB)) == true
+					|| (isGoalC = compareBoards(result.getBoard(), goalC)) == true)
 			{
+				
+				end = System.nanoTime();
 	    		System.out.println("DEPTH FIRST SEARCH RESULTS \n" + result);
-	    		return;
+	    		return (end - start);
 	    	}
 	    }
+	    
+	    return -1;
 	}
 	
 	/**
@@ -162,9 +184,9 @@ public class Main {
 				graph.addEdge(parent, child);
 			
 				boolean isGoalA, isGoalB, isGoalC;
-				if ((isGoalA = isBoardGoal(child.getBoard(), goalA)) == true
-						|| (isGoalB = isBoardGoal(child.getBoard(), goalB)) == true
-						|| (isGoalC = isBoardGoal(child.getBoard(), goalC)) == true)
+				if ((isGoalA = compareBoards(child.getBoard(), goalA)) == true
+						|| (isGoalB = compareBoards(child.getBoard(), goalB)) == true
+						|| (isGoalC = compareBoards(child.getBoard(), goalC)) == true)
 				{
 					continue;
 				}
@@ -178,38 +200,17 @@ public class Main {
 		}
 	}
 	
-	public static boolean isBoardGoal(Tile[][] board, Tile[][] goal){
+	public static boolean compareBoards(Tile[][] boardA, Tile[][] baordB){
 		for (int i = 0; i < 3; i++){
 			for (int j = 0; j < 3; j++){
-				if (board[i][j].getValue() != goal[i][j].getValue())
+				if (boardA[i][j].getValue() != baordB[i][j].getValue())
 					return false;
 			}
 		}
 		return true;
 	}
-
-	public static Tile[][] getIntialBoard(){
-		Tile[][] intialBoard = new Tile[3][3];
-		
-		// {2, 8, 3}
-		// {1, 6, 4}
-		// {7, 0, 5}
-		intialBoard[0][0] = new Tile(2,0,0);
-		intialBoard[0][1] = new Tile(8,0,1);
-		intialBoard[0][2] = new Tile(3,0,2);
-		
-		intialBoard[1][0] = new Tile(1,1,0);
-		intialBoard[1][1] = new Tile(6,1,1);
-		intialBoard[1][2] = new Tile(4,1,2);
-		
-		intialBoard[2][0] = new Tile(7,2,0);
-		intialBoard[2][1] = new Tile(0,2,1);
-		intialBoard[2][2] = new Tile(5,2,2);
-		
-		return intialBoard;
-	}
 	
-	public static Tile[][] getGoalBoard(int[] nums){
+	public static Tile[][] get2DTiles(int[] nums){
 		Tile[][] goalBoard = new Tile[3][3];
 		
 		goalBoard[0][0] = new Tile(nums[0],0,0);
