@@ -1,6 +1,11 @@
-/*
+/**
+ * The 8 Puzzle Problem: DFS & BFS
+ * 
  * @author: Matthew Dickens
  * @author: Jairo Vera
+ * 
+ * We give credit to those who built the JGraphT Library. 
+ * Thank you, kind programmers. 
  */
 
 import java.util.LinkedList;
@@ -20,12 +25,11 @@ public class Main {
 	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static Tile[][] initial = get2DTiles(new int[]{2,8,1,
-														  0,4,3,
-														  7,6,5});
-	
+	public static Tile[][] initial = get2DTiles(new int[]{5,6,7,
+														  4,0,8,
+														  3,2,1});
 	public static int rowZero = 1;
-	public static int colZero = 0;
+	public static int colZero = 1;
 	
 	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,8,0,4,7,6,5});
 	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,3,4,5,6,7,8});
@@ -35,6 +39,8 @@ public class Main {
 	public static Board goalStateA;
 	public static Board goalStateB;
 	public static Board goalStateC;
+	
+	public static int visitedNodes = 0;
 	
 	public static void main(String[] args) {
 		initialState = new Board(initial, rowZero, colZero);
@@ -57,7 +63,10 @@ public class Main {
 		else
 			System.out.println("Goodbye :p");
 		
-		System.out.println("Your search performance: " + execTime + " nanoseconds");
+		System.out.println("Your search performance:");
+		System.out.println("Execution Time:     " + execTime + " nanoseconds");
+		System.out.println("Size of Tree:       " + graph.vertexSet().size());
+		System.out.println("States encountered: " + visitedNodes);
 		
 		System.exit(0);
 	}
@@ -72,6 +81,7 @@ public class Main {
 	    
 		start = System.nanoTime();
 	    while (iterator.hasNext()){
+	    	visitedNodes++;
 	    	Board result = iterator.next();
 	    	boolean isGoalA, isGoalB, isGoalC;
 	    	
@@ -103,9 +113,6 @@ public class Main {
 			Board child = parent.move(tile);
 			
 			if(!hashTable.containsKey(child.getKey())){
-				
-				// fout.println("Makin Babies!!");
-				// fout.println(child);
 				graph.addVertex(child);
 				graph.addEdge(parent, child);
 				
@@ -135,6 +142,7 @@ public class Main {
 	    
 		start = System.nanoTime();
 	    while (iterator.hasNext()){
+	    	visitedNodes++;
 	    	Board result = iterator.next();
 	    	
 	    	boolean isGoalA, isGoalB, isGoalC;
@@ -167,7 +175,6 @@ public class Main {
 			Board child = parent.move(tile);
 			
 			if(!hashTable.containsKey(child.getKey())){
-			
 				graph.addVertex(child);
 				graph.addEdge(parent, child);
 			
