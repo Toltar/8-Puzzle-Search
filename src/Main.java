@@ -20,43 +20,40 @@ public class Main {
 	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static Tile[][] initial = get2DTiles(new int[]{2,8,3,
-													      1,6,4,
-												          7,0,5});
+	public static Tile[][] initial = get2DTiles(new int[]{2,8,1,
+														  0,4,3,
+														  7,6,5});
 	
-	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,
-														8, 0,4,
-														7,6,5});
+	public static int rowZero = 1;
+	public static int colZero = 0;
 	
-	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,
-														3,4,5,
-														6,7,8});
+	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,8,0,4,7,6,5});
+	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,3,4,5,6,7,8});
+	public static Tile[][] goalC = get2DTiles(new int[]{1,2,3,4,5,6,7,8,0});
 	
-	public static Tile[][] goalC = get2DTiles(new int[]{1,2,3,
-													    4,5,6,
-														7,8,0});
-	
+	public static Board initialState;
 	public static Board goalStateA;
 	public static Board goalStateB;
 	public static Board goalStateC;
 	
 	public static void main(String[] args) {
+		initialState = new Board(initial, rowZero, colZero);
 		goalStateA = new Board(goalA, 1, 1);
 		goalStateB = new Board(goalB, 0, 0);
 		goalStateC = new Board(goalC, 2, 2);
 		
 		Scanner in = new Scanner(System.in);
-		System.out.println("Matt & Jairo's 8-Puzzle Program!");
+		
+		System.out.println("Matt & Jairo's 8-Puzzle Program!\n");
+		System.out.println("INTIAL STATE\n" + initialState + "\n");
 		System.out.print("Enter 1 for BFS or 2 for DFS: ");
 		int input = in.nextInt();
 		
 		long execTime = 0;
-		if (input == 1) {
+		if (input == 1)
 			execTime = bfs();
-		}
-		else if (input == 2) {
+		else if (input == 2)
 			execTime = dfs();
-		}
 		else
 			System.out.println("Goodbye :p");
 		
@@ -66,10 +63,6 @@ public class Main {
 	}
 	
 	public static long bfs(){
-		Board initialState = new Board(initial, 2, 1);
-		System.out.println("INTIAL STATE");
-		System.out.println(initialState);
-		
 		graph.addVertex(initialState);
 		breadthBuild(initialState);
 		
@@ -87,7 +80,7 @@ public class Main {
 					|| (isGoalC = compareBoards(result.getBoard(), goalC)) == true)
 			{
 				end = System.nanoTime();
-				System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
+				System.out.println("\nBREADTH FIRST SEARCH RESULTS \n" + result);
 	    		return (end - start);
 	    	}
 	    }
@@ -127,17 +120,12 @@ public class Main {
 			}
 			else {	// this child exists somewhere in the graph
 				Board existingChild = hashTable.get(child.getKey());
-				//fout.println("Not makin babies!\n" + existingChild);
 				graph.addEdge(parent, existingChild);
 			}
 		}
 	}
 	
 	public static long dfs(){
-		Board initialState = new Board(initial, 2, 1);
-		System.out.println("INTIAL STATE");
-		System.out.println(initialState);
-		
 		graph.addVertex(initialState);
 		depthBuild(initialState);
 		
@@ -156,7 +144,7 @@ public class Main {
 			{
 				
 				end = System.nanoTime();
-	    		System.out.println("DEPTH FIRST SEARCH RESULTS \n" + result);
+	    		System.out.println("\nDEPTH FIRST SEARCH RESULTS \n" + result);
 	    		return (end - start);
 	    	}
 	    }
@@ -194,7 +182,6 @@ public class Main {
 				depthBuild(child);
 			} else {  // this child exists somewhere in the graph
                 Board existingChild = hashTable.get(child.getKey());
-                //fout.println("Not makin babies!\n" + existingChild);
                 graph.addEdge(parent, existingChild);
 			}
 		}
