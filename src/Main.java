@@ -20,30 +20,20 @@ public class Main {
 	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static Tile[][] initial = get2DTiles(new int[]{2,8,3,
-													      1,6,4,
-												          7,0,5});
+	public static Tile[][] initial = get2DTiles(new int[]{8,0,6,
+													      5,4,7,
+												          2,3,1});
 	
-	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,
-														8, 0,4,
-														7,6,5});
+	public static Tile[][] goal = get2DTiles(new int[]{0,1,2,
+													   3,4,5,
+													   6,7,8});
 	
-	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,
-														3,4,5,
-														6,7,8});
-	
-	public static Tile[][] goalC = get2DTiles(new int[]{1,2,3,
-													    4,5,6,
-														7,8,0});
-	
-	public static Board goalStateA;
-	public static Board goalStateB;
-	public static Board goalStateC;
+	public static Board initialState;
+	public static Board goalState;
 	
 	public static void main(String[] args) {
-		goalStateA = new Board(goalA, 1, 1);
-		goalStateB = new Board(goalB, 0, 0);
-		goalStateC = new Board(goalC, 2, 2);
+	    initialState = new Board(initial, 0, 1);
+		goalState = new Board(goal, 0, 0);
 		
 		Scanner in = new Scanner(System.in);
 		System.out.println("Matt & Jairo's 8-Puzzle Program!");
@@ -66,7 +56,6 @@ public class Main {
 	}
 	
 	public static long bfs(){
-		Board initialState = new Board(initial, 2, 1);
 		System.out.println("INTIAL STATE");
 		System.out.println(initialState);
 		
@@ -80,12 +69,8 @@ public class Main {
 		start = System.nanoTime();
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
-	    	boolean isGoalA, isGoalB, isGoalC;
 	    	
-			if ((isGoalA = compareBoards(result.getBoard(), goalA)) == true
-					|| (isGoalB = compareBoards(result.getBoard(), goalB)) == true
-					|| (isGoalC = compareBoards(result.getBoard(), goalC)) == true)
-			{
+			if (compareBoards(result.getBoard(), goal) == true ) {
 				end = System.nanoTime();
 				System.out.println("BREADTH FIRST SEARCH RESULTS \n" + result);
 	    		return (end - start);
@@ -110,31 +95,22 @@ public class Main {
 			Board child = parent.move(tile);
 			
 			if(!hashTable.containsKey(child.getKey())){
-				
-				// fout.println("Makin Babies!!");
-				// fout.println(child);
 				graph.addVertex(child);
 				graph.addEdge(parent, child);
 				
-				boolean isGoalA, isGoalB, isGoalC;
-				if ((isGoalA = compareBoards(child.getBoard(), goalA)) == true
-						|| (isGoalB = compareBoards(child.getBoard(), goalB)) == true
-						|| (isGoalC = compareBoards(child.getBoard(), goalC)) == true)
-				{
+				if (compareBoards(child.getBoard(), goal) == true) {
 					continue;
 				}
 				breadthBuild(child);
 			}
 			else {	// this child exists somewhere in the graph
 				Board existingChild = hashTable.get(child.getKey());
-				//fout.println("Not makin babies!\n" + existingChild);
 				graph.addEdge(parent, existingChild);
 			}
 		}
 	}
 	
 	public static long dfs(){
-		Board initialState = new Board(initial, 2, 1);
 		System.out.println("INTIAL STATE");
 		System.out.println(initialState);
 		
@@ -149,12 +125,7 @@ public class Main {
 	    while (iterator.hasNext()){
 	    	Board result = iterator.next();
 	    	
-	    	boolean isGoalA, isGoalB, isGoalC;
-			if ((isGoalA = compareBoards(result.getBoard(), goalA)) == true
-					|| (isGoalB = compareBoards(result.getBoard(), goalB)) == true
-					|| (isGoalC = compareBoards(result.getBoard(), goalC)) == true)
-			{
-				
+			if (compareBoards(result.getBoard(), goal) == true) {
 				end = System.nanoTime();
 	    		System.out.println("DEPTH FIRST SEARCH RESULTS \n" + result);
 	    		return (end - start);
@@ -183,18 +154,13 @@ public class Main {
 				graph.addVertex(child);
 				graph.addEdge(parent, child);
 			
-				boolean isGoalA, isGoalB, isGoalC;
-				if ((isGoalA = compareBoards(child.getBoard(), goalA)) == true
-						|| (isGoalB = compareBoards(child.getBoard(), goalB)) == true
-						|| (isGoalC = compareBoards(child.getBoard(), goalC)) == true)
-				{
+				if (compareBoards(child.getBoard(), goal) == true) {
 					continue;
 				}
 			
 				depthBuild(child);
 			} else {  // this child exists somewhere in the graph
                 Board existingChild = hashTable.get(child.getKey());
-                //fout.println("Not makin babies!\n" + existingChild);
                 graph.addEdge(parent, existingChild);
 			}
 		}
