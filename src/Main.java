@@ -4,8 +4,8 @@
  * @author: Matthew Dickens
  * @author: Jairo Vera
  * 
- * We give credit to those who built the JGraphT Library. 
- * Thank you, kind programmers. 
+ * We give credit and acknowledgement to Barak Naveh his Contributors.
+ * The ones who built the JGraphT Library. Thank you.
  */
 
 import java.util.LinkedList;
@@ -25,11 +25,27 @@ public class Main {
 	public static DirectedGraph<Board, DefaultEdge> graph = 
 			new DefaultDirectedGraph <Board, DefaultEdge>(DefaultEdge.class);
 	
-	public static Tile[][] initial = get2DTiles(new int[]{5,6,7,
-														  4,0,8,
-														  3,2,1});
-	public static int rowZero = 1;
-	public static int colZero = 1;
+	public static Tile[][] initialA = get2DTiles(new int[]{2,8,3,
+														   1,6,4,
+														   7,0,5});
+	
+	public static Tile[][] initialB = get2DTiles(new int[]{1,3,4,
+			   											   8,6,2,
+			   											   7,0,5});
+	
+	public static Tile[][] initialC = get2DTiles(new int[]{2,8,1,
+			   											   0,4,3,
+			   											   7,6,5});
+	
+	public static Tile[][] initialD = get2DTiles(new int[]{2,8,1,
+			   											   4,6,3,
+			   											   0,7,5});
+	
+	public static Tile[][] initialE = get2DTiles(new int[]{5,6,7,
+			  											   4,0,8,
+			  											   3,2,1});
+	public static int rowZero = 0;
+	public static int colZero = 0;
 	
 	public static Tile[][] goalA = get2DTiles(new int[]{1,2,3,8,0,4,7,6,5});
 	public static Tile[][] goalB = get2DTiles(new int[]{0,1,2,3,4,5,6,7,8});
@@ -43,16 +59,42 @@ public class Main {
 	public static int visitedNodes = 0;
 	
 	public static void main(String[] args) {
-		initialState = new Board(initial, rowZero, colZero);
 		goalStateA = new Board(goalA, 1, 1);
 		goalStateB = new Board(goalB, 0, 0);
 		goalStateC = new Board(goalC, 2, 2);
 		
 		Scanner in = new Scanner(System.in);
 		
-		System.out.println("Matt & Jairo's 8-Puzzle Program!\n");
-		System.out.println("INTIAL STATE\n" + initialState + "\n");
-		System.out.print("Enter 1 for BFS or 2 for DFS: ");
+		System.out.println("Matt & Jairo's 8-Puzzle Program!");
+		System.out.print("Type the capital letter for the initial state: ");
+		String initialLetter  = in.next();
+		
+		if (initialLetter.equalsIgnoreCase("A")){
+			rowZero = 2;
+			colZero = 1;
+			initialState = new Board(initialA, rowZero, colZero);
+		} else if (initialLetter.equalsIgnoreCase("B")) {
+			rowZero = 2;
+			colZero = 1;
+			initialState = new Board(initialB, rowZero, colZero);
+		} else if (initialLetter.equalsIgnoreCase("C")) {
+			rowZero = 1;
+			colZero = 0;
+			initialState = new Board(initialC, rowZero, colZero);
+		} else if (initialLetter.equalsIgnoreCase("D")) {
+			rowZero = 2;
+			colZero = 0;
+			initialState = new Board(initialD, rowZero, colZero);
+		} else if (initialLetter.equalsIgnoreCase("E")) {
+			rowZero = 1;
+			colZero = 1;
+			initialState = new Board(initialE, rowZero, colZero);
+		} else
+			System.out.println("Incorrect input. Restart and try again . . .");
+		
+		System.out.println("You chose\n" + initialState);
+		
+		System.out.print("Now, enter 1 for BFS or 2 for DFS: ");
 		int input = in.nextInt();
 		
 		long execTime = 0;
