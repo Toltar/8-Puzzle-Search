@@ -1,1 +1,2 @@
 # 8-Puzzle-Search
+A Java based implementation and experiment in which to find in certain cases weather Breadth First Search or Depth First Search is better in certain cases. We use the variablility of initial states in the 8-puzzle problem to give that situation to both algorithms and we will compare the two. This is important in the world of Artificial Intellegence because a program could use this to decide the optimal algorithm to used based on certain criteria and find the shourtest path to the goal.
